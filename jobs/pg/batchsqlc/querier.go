@@ -23,6 +23,7 @@ type Querier interface {
 	GetBatchRowsCount(ctx context.Context, batch uuid.UUID) (int64, error)
 	GetBatchStatus(ctx context.Context, id uuid.UUID) (StatusEnum, error)
 	GetCompletedBatches(ctx context.Context) ([]uuid.UUID, error)
+	GetNRowsByBatchID(ctx context.Context, batch uuid.UUID) (int64, error)
 	GetPendingBatchRows(ctx context.Context, batch uuid.UUID) ([]GetPendingBatchRowsRow, error)
 	GetProcessedBatchRowsByBatchIDSorted(ctx context.Context, batch uuid.UUID) ([]GetProcessedBatchRowsByBatchIDSortedRow, error)
 	InsertIntoBatchRows(ctx context.Context, arg InsertIntoBatchRowsParams) error

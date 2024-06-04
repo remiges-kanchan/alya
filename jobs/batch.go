@@ -455,7 +455,7 @@ func mapStatusEnum(status batchsqlc.StatusEnum) BatchStatus_t {
 }
 
 func (jm *JobManager) BatchList(req ListInput) (batchlist []BatchDetails_t, err error) {
-	
+
 	batchlist = make([]BatchDetails_t, 0)
 
 	// Calculate the threshold time based on the age in days
@@ -491,6 +491,15 @@ func (jm *JobManager) BatchList(req ListInput) (batchlist []BatchDetails_t, err 
 
 			status := getBatchStatus(row.Status)
 
+			rowCount, err := jm.Queries.GetNRowsByBatchID(context.Background(), row.ID)
+			if err != nil {
+				if err.Error() == "no rows in result set" {
+					continue // If no row is found, continue to the next step
+				} else {
+					return nil, err
+				}
+			}
+
 			detail := BatchDetails_t{
 				Id:          row.ID.String(),
 				App:         row.App,
@@ -500,7 +509,7 @@ func (jm *JobManager) BatchList(req ListInput) (batchlist []BatchDetails_t, err 
 				Reqat:       row.Reqat.Time,
 				Doneat:      row.Doneat.Time,
 				Outputfiles: outputfiles,
-				NRows:       0,
+				NRows:       int32(rowCount),
 				NSuccess:    row.Nsuccess.Int32,
 				NFailed:     row.Nfailed.Int32,
 				NAborted:    row.Naborted.Int32,

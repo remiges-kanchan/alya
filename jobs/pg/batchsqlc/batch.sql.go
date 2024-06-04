@@ -446,6 +446,17 @@ func (q *Queries) GetCompletedBatches(ctx context.Context) ([]uuid.UUID, error) 
 	return items, nil
 }
 
+const getNRowsByBatchID = `-- name: GetNRowsByBatchID :one
+SELECT COUNT(*) FROM batchrows WHERE batch = $1
+`
+
+func (q *Queries) GetNRowsByBatchID(ctx context.Context, batch uuid.UUID) (int64, error) {
+	row := q.db.QueryRow(ctx, getNRowsByBatchID, batch)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const getPendingBatchRows = `-- name: GetPendingBatchRows :many
 SELECT rowid, line, input, status, reqat, doneat, res, blobrows, messages, doneby
 FROM batchrows

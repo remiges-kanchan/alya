@@ -137,3 +137,6 @@ WHERE type = 'B'
 AND app = @app
 AND op = (sqlc.narg('op'):: type_enum) IS NULL OR (sqlc.narg('op')::type_enum)
 AND reqat >= @age;
+
+-- name: GetNRowsByBatchID :one
+SELECT COUNT(*) FROM batchrows WHERE batch = $1;
